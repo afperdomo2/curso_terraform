@@ -12,6 +12,15 @@ Bienvenido al curso de Terraform. Este repositorio contiene ejemplos básicos y 
 ```sh
 # Prepara tu directorio de trabajo para otros comandos
 terraform init
+
+# Genera un plan especulativo de ejecución y lo guarda con el nombre dado
+terraform plan -out plan.out
+
+# Crea o actualiza la infraestructura del plan guardado
+terraform apply "plan.out"
+
+# Eliminar la infraestructura creada
+terraform destroy
 ```
 
 ## Comandos principales de Terraform
