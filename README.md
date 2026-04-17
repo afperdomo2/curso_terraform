@@ -4,23 +4,37 @@ Bienvenido al curso de Terraform. Este repositorio contiene ejemplos básicos y 
 
 ## 🚀 1. Inicio rápido
 
-```sh
-# 1. Prepara tu directorio de trabajo para otros comandos
-terraform init
+### 1.1. Prepara tu directorio de trabajo para otros comandos
 
-# 2. Genera un plan especulativo de ejecución y lo guarda con el nombre dado
+```sh
+terraform init
+```
+
+### 1.2. Genera un plan especulativo de ejecución y lo guarda con el nombre dado
+
+```sh
+# Genera un plan especulativo de ejecución y lo guarda con el nombre dado
 terraform plan -out plan.out
 
-# Setear una variable al construir el plan
+# 1. Setear una variable al construir el plan
 terraform plan -out plan.out -var="project_name=curso_terraform"
 
-# Setear las variables desde un archivo, aunque por defecto Terraform ya las toma de terraform.tfvars
+# 2. Setear las variables desde un archivo, aunque por defecto Terraform ya las toma de terraform.tfvars
 terraform plan -out plan.out -var-file="terraform.tfvars"
 
-# 3. Crea o actualiza la infraestructura del plan guardado
-terraform apply "plan.out"
+# 3. Setear las configuraciones de 'backend', como por ejemplo el 'bucket' u otras
+terraform init -backend-config="region=us-east-1" -backend-config="bucket=apps-afperdomo-backup-bucket"
+```
 
-# 4. Eliminar la infraestructura creada
+### 1.3. Crea o actualiza la infraestructura del plan guardado
+
+```sh
+terraform apply "plan.out"
+```
+
+### 1.4. Eliminar la infraestructura creada
+
+```sh
 terraform destroy
 ```
 
@@ -65,6 +79,7 @@ Ejecuta `terraform init` antes de usar `plan`, `apply` o `destroy` para asegurar
 | **01-intro** | Introducción y primeros pasos. Uso de variables (`variables.tf` y `terraform.tfvars`) |
 | **02-outputs** | Salida de valores con `output` y cómo exponer información de tus recursos. |
 | **03-almacenamiento** | Creación de un recurso `aws_s3_bucket` y uso de variables locales para simplificar configuraciones. |
+| **04-estado-remoto** | Configuración de backend remoto con `s3` para almacenar el `terraform.tfstate` de forma compartida y segura. |
 
 ## 📦 6. Variables
 
@@ -120,3 +135,46 @@ aws_region    = "us-east-1"
 - Usa `description` en cada variable.
 - Si no hay un valor por defecto, exige que el usuario lo proporcione.
 - No guardes valores sensibles en archivos `.tfvars` sin control de acceso.
+
+## 🗄️ 7. Storage de Terraform
+
+Terraform guarda el estado de la infraestructura en un archivo llamado `terraform.tfstate`. Este archivo contiene la información actual de los recursos creados y es fundamental para que Terraform pueda calcular cambios futuros.
+
+En la clase `04-estado-remoto` se muestra cómo mover este estado a un backend remoto usando `s3`, con parámetros como `bucket`, `key`, `region`, `encrypt` y `use_lockfile`.
+
+### 🔹 Storage local
+
+Por defecto, este curso utiliza el storage local, es decir, el archivo `terraform.tfstate` se crea en el directorio del proyecto. Esto funciona bien para ejemplos pequeños, pero no es ideal cuando varias personas o equipos trabajan sobre la misma infraestructura.
+
+### 🔹 Remote backend
+
+Para proyectos colaborativos, se recomienda usar un backend remoto. Algunos ejemplos comunes son:
+
+- `S3` + `DynamoDB` para bloqueo de estado en AWS.
+- `Terraform Cloud` o `Terraform Enterprise`.
+- `Azure Storage Account`.
+- `Google Cloud Storage`.
+
+El backend remoto asegura que:
+
+- el estado se comparte entre el equipo,
+- el estado no se pierde accidentalmente,
+- se evita la edición concurrente con bloqueo de estado.
+
+### 🔹 Buenas prácticas
+
+- No subas `terraform.tfstate` al repositorio.
+- Usa un backend remoto cuando trabajes en equipo.
+- Protege las credenciales usadas para acceder al backend.
+
+## Utilidades
+
+Recurso para crear sufijos o prefijos para colocarle a los nombres de los recursos
+
+```json
+resource "random_string" "suffix" {
+  length  = 4
+  special = false
+  upper   = false
+}
+```
