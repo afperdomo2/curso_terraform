@@ -63,6 +63,7 @@ Ejecuta `terraform init` antes de usar `plan`, `apply` o `destroy` para asegurar
 | Clase | Descripción |
 | --- | --- |
 | **01-intro** | Introducción y primeros pasos. Uso de variables (`variables.tf` y `terraform.tfvars`) |
+| **02-outputs** | Salida de valores con `output` y cómo exponer información de tus recursos. |
 
 ## 📦 6. Variables
 
