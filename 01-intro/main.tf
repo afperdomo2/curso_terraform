@@ -8,13 +8,13 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1"
+  region = var.region
 }
 
 resource "aws_iam_user" "app_server" {
-  name = "curso-terraform-test-user"
+  name = "${var.app_name}-test-user"
   tags = {
-    "proyecto"   = "curso_terraform"
-    "creado_por" = "terraform"
+    "proyecto"   = var.project_name
+    "creado_por" = var.created_by
   }
 }
