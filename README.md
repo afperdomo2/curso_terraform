@@ -64,6 +64,7 @@ Ejecuta `terraform init` antes de usar `plan`, `apply` o `destroy` para asegurar
 | --- | --- |
 | **01-intro** | Introducción y primeros pasos. Uso de variables (`variables.tf` y `terraform.tfvars`) |
 | **02-outputs** | Salida de valores con `output` y cómo exponer información de tus recursos. |
+| **03-almacenamiento** | Creación de un recurso `aws_s3_bucket` y uso de variables locales para simplificar configuraciones. |
 
 ## 📦 6. Variables
 
