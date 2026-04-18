@@ -76,10 +76,11 @@ Ejecuta `terraform init` antes de usar `plan`, `apply` o `destroy` para asegurar
 
 | Clase | Descripción |
 | --- | --- |
-| **01-intro** | Introducción y primeros pasos. Uso de variables (`variables.tf` y `terraform.tfvars`) |
-| **02-outputs** | Salida de valores con `output` y cómo exponer información de tus recursos. |
-| **03-almacenamiento** | Creación de un recurso `aws_s3_bucket` y uso de variables locales para simplificar configuraciones. |
-| **04-estado-remoto** | Configuración de backend remoto con `s3` para almacenar el `terraform.tfstate` de forma compartida y segura. |
+| **01-intro** | Creación de un usuario IAM básico con variables en `variables.tf` y valores en `terraform.tfvars`. |
+| **02-outputs** | Mismo recurso IAM que en `01` y exposición de sus datos con salidas `output`. |
+| **03-almacenamiento** | Creación de un bucket S3 (`aws_s3_bucket`) y uso de `local` para etiquetas comunes. |
+| **04-estado-remoto** | Configuración de backend remoto `s3` para almacenar el `terraform.tfstate` compartido y cifrado. |
+| **05-data** | Uso de un `data` source `aws_iam_group` para leer un grupo IAM existente en AWS, creación de usuario IAM y membership en el grupo. |
 
 ## 📦 6. Variables
 
@@ -166,6 +167,61 @@ El backend remoto asegura que:
 - No subas `terraform.tfstate` al repositorio.
 - Usa un backend remoto cuando trabajes en equipo.
 - Protege las credenciales usadas para acceder al backend.
+
+## 🔧 Remote state y backend
+
+Cuando se usa un backend remoto, Terraform deja de guardar el estado en el directorio local y lo almacena en un servicio compartido. En la clase `04-estado-remoto` se implementa un backend `s3` con un archivo de configuración de backend para definir:
+
+- `bucket` : nombre del bucket S3 que guarda el estado.
+- `key` : ruta y nombre del archivo de estado dentro del bucket.
+- `region` : región donde se ubica el bucket.
+- `encrypt` : habilita el cifrado del estado en reposo.
+- `use_lockfile` : permite bloqueo para evitar cambios concurrentes.
+
+### 📁 Archivo `backend.tf`
+
+El backend puede definirse en un archivo como `backend.tf` o directamente en `main.tf` dentro del bloque `terraform`. Un ejemplo típico es:
+
+```hcl
+terraform {
+  backend "s3" {
+    bucket       = "mi-bucket-terraform"
+    key          = "terraform.tfstate"
+    region       = "us-east-1"
+    encrypt      = true
+    use_lockfile = true
+  }
+}
+```
+
+Al usar un archivo `backend.tf`, el contenido se mantiene separado de los recursos y se hace más fácil cambiar o reconfigurar el backend.
+
+### 🚀 `terraform init` con `-backend-config`
+
+A veces no quieres dejar valores fijos en el archivo de backend. En ese caso puedes pasar valores al inicializar el directorio con `terraform init`:
+
+```sh
+terraform init \
+  -backend-config="bucket=apps-afperdomo-backup-bucket" \
+  -backend-config="region=us-east-1" \
+  -backend-config="key=terraform.tfstate"
+```
+
+También puedes usar un archivo separado de backend config, por ejemplo `backend.config`:
+
+```hcl
+bucket = "apps-afperdomo-backup-bucket"
+region = "us-east-1"
+key    = "terraform.tfstate"
+```
+
+Y luego inicializar con:
+
+```sh
+terraform init -backend-config=backend.config
+```
+
+Esto es especialmente útil cuando quieres mantener diferentes entornos (`dev`, `prod`) con configuraciones distintas sin modificar los archivos `.tf`.
 
 ## Utilidades
 
