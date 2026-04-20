@@ -1,0 +1,12 @@
+# Copia terraform.tfvars.example y renombralo a terraform.tfvars
+# Luego completa los valores requeridos.
+
+key_name = "TU_KEY_PAIR_AQUI"
+
+# Opcionales (tienen defaults):
+# region         = "us-east-1"
+# org_name       = "felipecorp"
+# project_name   = "tfcourse"
+# environment    = "dev"
+# instance_type  = "t3.micro"
+# instance_count = 1
