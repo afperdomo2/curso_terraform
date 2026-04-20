@@ -10,7 +10,14 @@ Bienvenido al curso de Terraform. Este repositorio contiene ejemplos básicos y 
 terraform init
 ```
 
+```sh
+# Analiza tus archivos en busca de errores de sintaxis y lógica interna (requiere init)
+terraform validate
+```
+
 ### 1.2. Genera un plan especulativo de ejecución y lo guarda con el nombre dado
+
+Realiza una comparación real del código contra la nube. Ejemplo: Si colocamos una región de AWS que no existe, en este punto se genera el error, al hacer el plan.
 
 ```sh
 # Genera un plan especulativo de ejecución y lo guarda con el nombre dado
@@ -35,7 +42,18 @@ terraform apply "plan.out"
 ### 1.4. Eliminar la infraestructura creada
 
 ```sh
+# Destruir todos los recursos craedos
 terraform destroy
+
+# Destruir solo un recurso
+terraform destroy -target=aws_instance.ec2_instance
+```
+
+### Otros comandos
+
+```sh
+# Formatea el código con el estándar de HashiCorp. Estética y alineación de texto
+terraform fmt -recursive
 ```
 
 ## 📌 2. Comandos principales de Terraform
