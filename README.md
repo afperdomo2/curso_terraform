@@ -241,6 +241,32 @@ terraform init -backend-config=backend.config
 
 Esto es especialmente útil cuando quieres mantener diferentes entornos (`dev`, `prod`) con configuraciones distintas sin modificar los archivos `.tf`.
 
+## 🔎 Comparativa: `data` vs `import`
+
+Terraform ofrece dos formas distintas de trabajar con recursos existentes:
+
+- `data`: lee información de recursos que ya existen en la nube sin adoptar su gestión completa.
+- `import`: trae un recurso existente al estado de Terraform para que luego puedas gestionarlo como un recurso declarado.
+
+### ¿Cuándo usar cada uno?
+
+- Usa `data` cuando necesites consultar atributos de un recurso existente y no quieras que Terraform lo cree o destruya.
+- Usa `import` cuando quieras que Terraform comience a gestionar ese recurso existente como parte de tu infraestructura declarada.
+
+### Comparativa
+
+| Característica | `data` source | `terraform import` |
+| --- | --- | --- |
+| Propósito | Leer información de recursos existentes. | Adoptar un recurso existente en el estado de Terraform. |
+| Crea recurso | No. Solo consulta datos. | No crea, pero vincula el recurso existente al recurso declarado. |
+| Administración futura | El recurso no está gestionado plenamente por Terraform. | El recurso pasa a ser gestionado por Terraform tras la importación. |
+| Uso típico | Consultar IDs, ARNs, configuraciones u otros atributos. | Administrar un recurso existente sin recrearlo. |
+| Ejemplo en el curso | `05-data` lee un grupo IAM existente con `aws_iam_group`. | `08-import` importa un bucket S3 existente en el estado con `terraform import`. |
+
+### Nota práctica
+
+En `05-data` se muestra cómo usar un `data` source para leer un recurso ya existente en AWS y usar sus valores en la configuración. En `08-import` se muestra cómo traer un recurso existente al estado de Terraform para gestionarlo posteriormente.
+
 ## Utilidades
 
 Recurso para crear sufijos o prefijos para colocarle a los nombres de los recursos
