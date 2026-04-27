@@ -1,0 +1,57 @@
+name: Terraform Plan - 09-ci-cd
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "09-ci-cd/**" # Dispara el workflow apenas para modificaciones en el directorio 09-ci-cd
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "09-ci-cd/**"
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 09-ci-cd # Define el directorio de trabajo para los comandos de Terraform
+
+    steps:
+      # Configura el repositorio para que el workflow pueda acceder al código fuente
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Configura el Terraform para ser utilizado en el workflow
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # Configura las credenciales de AWS para que Terraform pueda interactuar con los servicios de AWS
+      - name: Configure AWS credentials
+        id: aws-credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      # Ejecuta los comandos de Terraform para inicializar, validar y planificar la infraestructura
+      - name: Terraform Init
+        id: terraform-init
+        run: terraform init
+
+      # Ejecuta el comando de formato de Terraform para verificar que el código esté correctamente formateado
+      - name: Terraform Format Check
+        id: terraform-format
+        run: terraform fmt --check
+        continue-on-error: true
+
+      # Ejecuta el comando de validación de Terraform para verificar que la configuración sea válida
+      - name: Terraform Validate
+        id: terraform-validate
+        run: terraform validate
+
+      # Ejecuta el comando de planificación de Terraform para mostrar los cambios que se realizarán en la infraestructura
+      - name: Terraform Plan
+        id: terraform-plan
+        run: terraform plan
