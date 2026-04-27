@@ -38,7 +38,8 @@ jobs:
       # Inicializar, validar y planificar la infraestructura
       - name: Terraform Init
         id: terraform-init
-        run: terraform init
+        run: terraform init -backend-config="bucket=${{ secrets.S3_BUCKET_NAME }}"
+          -backend-config="region=us-east-1"
 
       # Formato de Terraform para verificar que el código esté correctamente formateado
       - name: Terraform Format Check

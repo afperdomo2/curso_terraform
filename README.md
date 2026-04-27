@@ -4,6 +4,22 @@
 
 Bienvenido al curso de Terraform. Este repositorio contiene ejemplos básicos y comandos esenciales para iniciar tu flujo de trabajo con Terraform.
 
+## 📖 Tabla de Contenidos
+
+- [1. Inicio rápido](#-1-inicio-rápido)
+- [2. Comandos principales de Terraform](#-2-comandos-principales-de-terraform)
+- [3. Otros comandos útiles](#-3-otros-comandos-útiles)
+- [4. Recomendación](#-4-recomendación)
+- [5. Clases del curso](#-5-clases-del-curso)
+- [6. CI/CD con GitHub Actions](#-6-ciacd-con-github-actions)
+- [7. Variables](#-7-variables)
+- [8. Storage de Terraform](#-8-storage-de-terraform)
+- [9. Remote state y backend](#-9-remote-state-y-backend)
+- [10. Terraform Registry](#-10-terraform-registry)
+- [11. Comparativa: `data` vs `import`](#-11-comparativa-data-vs-import)
+- [12. Utilidades](#-12-utilidades)
+- [Licencia](#-licencia)
+
 ## 🚀 1. Inicio rápido
 
 ### 1.1. Prepara tu directorio de trabajo para otros comandos
@@ -129,6 +145,7 @@ Para que el workflow pueda autenticarse en AWS, necesitas configurar dos **secre
 | --- | --- |
 | `AWS_ACCESS_KEY_ID` | ID de acceso de tu usuario IAM en AWS |
 | `AWS_SECRET_ACCESS_KEY` | Clave secreta del usuario IAM en AWS |
+| `S3_BUCKET_NAME` | Nombre del bucket para almacenar el estado |
 
 #### ¿Cómo agregar secrets en GitHub?
 
@@ -256,7 +273,7 @@ El backend remoto asegura que:
 - Usa un backend remoto cuando trabajes en equipo.
 - Protege las credenciales usadas para acceder al backend.
 
-## 🔧 Remote state y backend
+## 🔧 9. Remote state y backend
 
 Cuando se usa un backend remoto, Terraform deja de guardar el estado en el directorio local y lo almacena en un servicio compartido. En la clase `04-estado-remoto` se implementa un backend `s3` con un archivo de configuración de backend para definir:
 
@@ -311,7 +328,7 @@ terraform init -backend-config=backend.config
 
 Esto es especialmente útil cuando quieres mantener diferentes entornos (`dev`, `prod`) con configuraciones distintas sin modificar los archivos `.tf`.
 
-## 🌐 Terraform Registry
+## 🌐 10. Terraform Registry
 
 Terraform Registry es el repositorio oficial de módulos y proveedores de Terraform. Desde allí puedes buscar y reutilizar módulos confiables, así como instalar proveedores adicionales con `terraform init`.
 
@@ -319,7 +336,7 @@ Terraform Registry es el repositorio oficial de módulos y proveedores de Terraf
 - Los proveedores se declaran en `required_providers` y se descargan automáticamente al hacer `terraform init`.
 - Usar Registry ayuda a acelerar el desarrollo y estandarizar patrones de infraestructura.
 
-## 🔎 Comparativa: `data` vs `import`
+## 🔎 11. Comparativa: `data` vs `import`
 
 Terraform ofrece dos formas distintas de trabajar con recursos existentes:
 
@@ -345,7 +362,7 @@ Terraform ofrece dos formas distintas de trabajar con recursos existentes:
 
 En `05-data` se muestra cómo usar un `data` source para leer un recurso ya existente en AWS y usar sus valores en la configuración. En `08-import` se muestra cómo traer un recurso existente al estado de Terraform para gestionarlo posteriormente.
 
-## Utilidades
+## 12. Utilidades
 
 Recurso para crear sufijos o prefijos para colocarle a los nombres de los recursos
 
