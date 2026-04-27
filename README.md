@@ -203,10 +203,6 @@ Cuando se usa un backend remoto, Terraform deja de guardar el estado en el direc
 
 ### 📁 Archivo `backend.tf`
 
-## 📜 Licencia
-
-Este proyecto está bajo la licencia MIT. Consulta el archivo `LICENSE` en la raíz del repositorio para más detalles.
-
 El backend puede definirse en un archivo como `backend.tf` o directamente en `main.tf` dentro del bloque `terraform`. Un ejemplo típico es:
 
 ```hcl
@@ -295,3 +291,7 @@ resource "random_string" "suffix" {
   upper   = false
 }
 ```
+
+## 📜 Licencia
+
+Este proyecto está bajo la licencia MIT. Consulta el archivo `LICENSE` en la raíz del repositorio para más detalles.

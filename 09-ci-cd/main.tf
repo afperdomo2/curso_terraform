@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "s3-assets" {
-  bucket        = "${var.org_name}-${var.project_name}-${var.environment}-demo-ci-cd"
+  bucket        = "${var.org_name}-${var.project_name}-${var.environment}-ci-cd"
   force_destroy = true
   tags = {
     organization = var.org_name
