@@ -1,5 +1,7 @@
 # 🌱 Curso Terraform
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Bienvenido al curso de Terraform. Este repositorio contiene ejemplos básicos y comandos esenciales para iniciar tu flujo de trabajo con Terraform.
 
 ## 🚀 1. Inicio rápido
@@ -94,11 +96,14 @@ Ejecuta `terraform init` antes de usar `plan`, `apply` o `destroy` para asegurar
 
 | Clase | Descripción |
 | --- | --- |
-| **01-intro** | Creación de un usuario IAM básico con variables en `variables.tf` y valores en `terraform.tfvars`. |
-| **02-outputs** | Mismo recurso IAM que en `01` y exposición de sus datos con salidas `output`. |
-| **03-almacenamiento** | Creación de un bucket S3 (`aws_s3_bucket`) y uso de `local` para etiquetas comunes. |
-| **04-estado-remoto** | Configuración de backend remoto `s3` para almacenar el `terraform.tfstate` compartido y cifrado. |
-| **05-data** | Uso de un `data` source `aws_iam_group` para leer un grupo IAM existente en AWS, creación de usuario IAM y membership en el grupo. |
+| **01-intro** | Creación de un usuario IAM básico con variables en `variables.tf` y valores en `terraform.tfvars`.
+| **02-outputs** | Reutiliza el usuario IAM de `01` y agrega `outputs` para exponer `user_name` y `user_arn`.
+| **03-almacenamiento** | Crea un bucket S3 (`aws_s3_bucket`) con `local.common_tags` y genera salidas para nombre y ARN.
+| **04-estado-remoto** | Configura un backend remoto `s3` para que el estado de Terraform se almacene fuera del directorio local.
+| **05-data** | Usa un `data` source `aws_iam_group` para leer un grupo IAM existente, crea usuario IAM y lo asocia al grupo.
+| **06-ec2** | Implementa una VPC pública, subnet, IGW, ruta, security group y una instancia EC2 con `user_data` para desplegar Apache.
+| **07-modulos** | Muestra la descomposición en módulos reutilizables: `networking`, `security` y `compute` dentro de `07-modulos/modules`.
+| **08-import** | Importa un bucket S3 existente a Terraform y asocia un usuario IAM, demostrando el workflow de `terraform import`.
 
 ## 📦 6. Variables
 
@@ -198,6 +203,10 @@ Cuando se usa un backend remoto, Terraform deja de guardar el estado en el direc
 
 ### 📁 Archivo `backend.tf`
 
+## 📜 Licencia
+
+Este proyecto está bajo la licencia MIT. Consulta el archivo `LICENSE` en la raíz del repositorio para más detalles.
+
 El backend puede definirse en un archivo como `backend.tf` o directamente en `main.tf` dentro del bloque `terraform`. Un ejemplo típico es:
 
 ```hcl
@@ -240,6 +249,14 @@ terraform init -backend-config=backend.config
 ```
 
 Esto es especialmente útil cuando quieres mantener diferentes entornos (`dev`, `prod`) con configuraciones distintas sin modificar los archivos `.tf`.
+
+## 🌐 Terraform Registry
+
+Terraform Registry es el repositorio oficial de módulos y proveedores de Terraform. Desde allí puedes buscar y reutilizar módulos confiables, así como instalar proveedores adicionales con `terraform init`.
+
+- Un módulo en Registry puede ser referenciado con `source = "registry.terraform.io/<NAMESPACE>/<NAME>/<PROVIDER>"`.
+- Los proveedores se declaran en `required_providers` y se descargan automáticamente al hacer `terraform init`.
+- Usar Registry ayuda a acelerar el desarrollo y estandarizar patrones de infraestructura.
 
 ## 🔎 Comparativa: `data` vs `import`
 
