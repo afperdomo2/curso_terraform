@@ -104,15 +104,80 @@ Ejecuta `terraform init` antes de usar `plan`, `apply` o `destroy` para asegurar
 | **06-ec2** | Implementa una VPC pública, subnet, IGW, ruta, security group y una instancia EC2 con `user_data` para desplegar Apache.
 | **07-modulos** | Muestra la descomposición en módulos reutilizables: `networking`, `security` y `compute` dentro de `07-modulos/modules`.
 | **08-import** | Importa un bucket S3 existente a Terraform y asocia un usuario IAM, demostrando el workflow de `terraform import`.
+| **09-ci-cd** | Implementa un flujo de CI/CD con GitHub Actions que valida y planifica cambios en Terraform automáticamente.
 
-## 📦 6. Variables
+## 🚀 6. CI/CD con GitHub Actions
+
+Este repositorio incluye un flujo automatizado de **Integración Continua** en `09-ci-cd/` que valida y planifica cambios de Terraform cada vez que realizas un `push` a la rama `main`.
+
+### 📋 6.1. ¿Qué hace el workflow?
+
+El archivo `.github/workflows/terraform-ci-cd.yml` ejecuta automáticamente:
+
+1. **Inicializa Terraform** (`terraform init`)
+2. **Valida el formato** (`terraform fmt --check`) — solo avisa si hay errores de estilo
+3. **Valida la configuración** (`terraform validate`)
+4. **Genera un plan** (`terraform plan`) — muestra qué cambios se harían en AWS
+
+El workflow se ejecuta **solo cuando hay cambios en `09-ci-cd/`** para evitar ejecuciones innecesarias.
+
+### 🔐 6.2. Variables de entorno (Secrets)
+
+Para que el workflow pueda autenticarse en AWS, necesitas configurar dos **secrets** en tu repositorio de GitHub:
+
+| Secret | Descripción |
+| --- | --- |
+| `AWS_ACCESS_KEY_ID` | ID de acceso de tu usuario IAM en AWS |
+| `AWS_SECRET_ACCESS_KEY` | Clave secreta del usuario IAM en AWS |
+
+#### ¿Cómo agregar secrets en GitHub?
+
+1. Ve a tu repositorio en GitHub
+2. `Settings` → `Secrets and variables` → `Actions`
+3. Click en `New repository secret`
+4. Agrega cada secret con su valor correspondiente
+
+> **⚠️ Nota importante:** Estos valores nunca deben subirse al repositorio. Los secrets en GitHub están encriptados y solo son accesibles para los workflows autorizados.
+
+### 🛠️ 6.3. ¿Cómo obtener las credenciales?
+
+Si aún no tienes credenciales de AWS, crea un usuario IAM:
+
+1. Accede a AWS Console → **IAM** → **Users**
+2. Crea un nuevo usuario (ej: `github-actions-user`)
+3. Asigna permisos necesarios (ej: `AmazonS3FullAccess`)
+4. En **Security credentials**, genera una **Access Key**
+5. Copia el **Access Key ID** y la **Secret Access Key** a los secrets de GitHub
+
+### 📝 6.4. Cómo usar el workflow
+
+Simplemente realiza cambios en `09-ci-cd/` y haz push a `main`:
+
+```sh
+cd 09-ci-cd
+# Realiza tus cambios en los archivos .tf
+git add .
+git commit -m "feat: add new resource"
+git push origin main
+```
+
+El workflow se ejecutará automáticamente. Puedes ver el resultado en **GitHub** → **Actions** → **Terraform Plan - 09-ci-cd**.
+
+### ✅ 6.5. Referencia
+
+- Ver el workflow completo: `.github/workflows/terraform-ci-cd.yml`
+- Documentación oficial: [GitHub Actions con Terraform](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+
+---
+
+## 📦 7. Variables
 
 En este curso se usan dos archivos principales para gestionar variables:
 
 - `variables.tf`: define las variables que Terraform espera recibir.
 - `terraform.tfvars`: contiene valores concretos que se aplican automáticamente cuando se ejecuta `terraform plan` o `terraform apply`.
 
-### 📄 6.1. Uso de `variables.tf`
+### 📄 7.1. Uso de `variables.tf`
 
 Este archivo debe contener la definición de cada variable con su tipo y descripción.
 
@@ -126,7 +191,7 @@ variable "project_name" {
 }
 ```
 
-### 📝 6.2. Uso de `terraform.tfvars`
+### 📝 7.2. Uso de `terraform.tfvars`
 
 Este archivo define los valores que quieres usar en tu entorno. No se recomienda subirlo a un repositorio si contiene datos sensibles.
 
@@ -139,7 +204,7 @@ created_by    = "terraform"
 aws_region    = "us-east-1"
 ```
 
-### 🚀 6.3. Formas de pasar variables
+### 🚀 7.3. Formas de pasar variables
 
 - Con `terraform.tfvars` o archivos con extensión `.auto.tfvars`
 - Con la opción `-var`:
@@ -154,13 +219,13 @@ aws_region    = "us-east-1"
   export TF_VAR_project_name=curso_terraform
   ```
 
-### 💡 6.4. Recomendaciones
+### 💡 7.4. Recomendaciones
 
 - Usa `description` en cada variable.
 - Si no hay un valor por defecto, exige que el usuario lo proporcione.
 - No guardes valores sensibles en archivos `.tfvars` sin control de acceso.
 
-## 🗄️ 7. Storage de Terraform
+## 🗄️ 8. Storage de Terraform
 
 Terraform guarda el estado de la infraestructura en un archivo llamado `terraform.tfstate`. Este archivo contiene la información actual de los recursos creados y es fundamental para que Terraform pueda calcular cambios futuros.
 
