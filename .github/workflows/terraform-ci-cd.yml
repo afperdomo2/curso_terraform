@@ -1,4 +1,4 @@
-name: Terraform Plan - 09-ci-cd
+name: Terraform Deploy - 09-ci-cd
 
 on:
   push:
@@ -20,38 +20,44 @@ jobs:
     steps:
       # Configura el repositorio para que el workflow pueda acceder al código fuente
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # Configura el Terraform para ser utilizado en el workflow
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v4
 
       # Configura las credenciales de AWS para que Terraform pueda interactuar con los servicios de AWS
       - name: Configure AWS credentials
         id: aws-credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # Ejecuta los comandos de Terraform para inicializar, validar y planificar la infraestructura
+      # Inicializar, validar y planificar la infraestructura
       - name: Terraform Init
         id: terraform-init
         run: terraform init
 
-      # Ejecuta el comando de formato de Terraform para verificar que el código esté correctamente formateado
+      # Formato de Terraform para verificar que el código esté correctamente formateado
       - name: Terraform Format Check
         id: terraform-format
         run: terraform fmt --check
         continue-on-error: true
 
-      # Ejecuta el comando de validación de Terraform para verificar que la configuración sea válida
+      # Validación de Terraform para verificar que la configuración sea válida
       - name: Terraform Validate
         id: terraform-validate
         run: terraform validate
 
-      # Ejecuta el comando de planificación de Terraform para mostrar los cambios que se realizarán en la infraestructura
+      # Planificación de Terraform para mostrar los cambios que se realizarán en la infraestructura
       - name: Terraform Plan
         id: terraform-plan
-        run: terraform plan
+        run: terraform plan -out plan.out
+
+      # Aplica los cambios en la infraestructura solo si el evento es un push a la rama main
+      - name: Terraform Apply
+        id: terraform-apply
+        run: terraform apply plan.out
+        if: github.event_name == 'push' # Solo aplica los cambios en la rama main, no en pull requests
